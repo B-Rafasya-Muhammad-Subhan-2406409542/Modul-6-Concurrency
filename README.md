@@ -1,0 +1,10 @@
+# Tutorial 6 - Concurrency
+
+## Commit 1 Reflection notes
+Pada *commit* ini, saya mengimplementasikan *single-threaded web server* sederhana menggunakan bahasa Rust yang mendengarkan koneksi TCP pada *port* 7878. Fungsi `handle_connection` ditambahkan untuk menerima dan memproses setiap *stream* koneksi yang masuk dari klien (seperti *browser*). Di dalam fungsi tersebut, saya menggunakan `BufReader` yang membungkus *stream* agar data dapat dibaca secara efisien baris demi baris. Program diinstruksikan untuk membaca baris-baris teks tersebut secara iteratif hingga menemukan baris kosong, yang menandakan akhir dari bagian *header* sebuah HTTP *request*. Hasil pembacaan ini kemudian dikumpulkan dan dicetak ke terminal. Dari proses ini, saya dapat melihat wujud mentah dari HTTP *request* yang dikirimkan oleh *browser*, seperti metode yang digunakan (`GET`), rute yang diminta (`/`), serta versi protokolnya (`HTTP/1.1`), yang memberikan pemahaman fundamental tentang bagaimana komunikasi web bekerja di tingkat dasar.
+
+## Commit 2 Reflection notes
+Pada *commit* ini, saya telah berhasil memodifikasi fungsi 1handle_connection1 sehingga server tidak hanya menerima koneksi, tetapi juga mampu memberikan respons balik berupa halaman HTML. Saya menambahkan penggunaan library `std::fs` untuk membaca konten dari file `hello.html` secara langsung menggunakan fungsi `fs::read_to_string`. Penentuan baris status respons ditetapkan pada `"HTTP/1.1 200 OK"` untuk menginformasikan kepada browser bahwa permintaan berhasil diproses.
+
+Selain itu, saya menghitung panjang konten file tersebut agar dapat dimasukkan ke dalam header `Content-Length`, yang sangat *krusial* agar browser mengetahui jumlah data byte yang harus dibaca. Seluruh komponen respons, mulai dari baris status, header, hingga isi konten, digabungkan menggunakan makro `format!` dengan pemisah baris `\r\n` sesuai dengan standar protokol HTTP. Terakhir, data tersebut dikirimkan kembali ke klien melalui metode `stream.write_all` yang mengubah string respons menjadi *deretan byte* agar bisa ditransmisikan melalui jaringan.
+![Commit 2 screen capture](/assets/images/commit2.png)
